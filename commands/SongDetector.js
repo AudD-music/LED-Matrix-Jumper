@@ -11,7 +11,7 @@ class SongDetector {
         this._upload = uploadAndReturnUrl;
     }
 
-    async execute(bytes) {
+    /*async execute(bytes) {
         const url = await this._upload(this._config, bytes);
         const result = await this.pushToRecognitionApi(url);
 
@@ -20,11 +20,15 @@ class SongDetector {
         }
 
         return result.data.result.title;
-    }
+    }*/
 
-    async pushToRecognitionApi(url) {
+    async pushToRecognitionApi(bytes) {
+        const body = new FormData();
+        body.append("file", bytes, "file.mp3");
         const token =  this._config["audd-token"];
-        return await this._httpClient.post(`https://api.audd.io/?api_token=${token}&return=timecode&url=${url}`);
+        return await this._httpClient.post(`https://api.audd.io/?api_token=${token}&return=timecode`, body, {
+            headers: {'Content-Type': 'multipart/form-data'}
+        });
     }
 }
 
